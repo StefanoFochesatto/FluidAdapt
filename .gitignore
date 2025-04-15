@@ -1,0 +1,7 @@
+# Ignore the .history folder
+.history/
+
+# Other common ignores (optional)
+*.log
+node_modules/
+.env
