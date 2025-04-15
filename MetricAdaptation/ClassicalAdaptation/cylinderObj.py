@@ -3,7 +3,7 @@ from navierstokes import *
 from animate import *
 import os
 
-os.chdir("/home/stefano/Desktop/AdaptiveFSI/Cylinder")
+os.chdir("/home/stefano/Desktop/FluidAdapt/MetricAdaptation/ClassicalAdaptation")
 
 class AdaptiveNavierStokesSolver:
     def __init__(self, mesh_file, dt=0.05, Re=400, H0=1.0, N=150, target_complexity=1500.0, h_min=1.0e-7, h_max=1.0):
@@ -70,11 +70,13 @@ class AdaptiveNavierStokesSolver:
     def solve_step(self, replaceUold = False, updateT = False, write = False):
         """Solve one time step and write output."""
         solve(self.F == 0, self.up, bcs=self.bcs, nullspace=None, solver_parameters=self.sparams, options_prefix="")
-        
+        if write:
+            self.outfile.write(self.u, self.p, time=self.t, adaptive = True)
         if updateT:
             self.t += self.dt
         if replaceUold:
             self.uold.interpolate(self.u)
+        
         
 
 
@@ -105,38 +107,32 @@ if __name__ == "__main__":
             H = solver.get_hessian_metric()
             solver.mesh = adapt(solver.mesh, H)
             solver.setup_problem(prevMeshuold=solver.uold)
-            solver.solve_step(replaceUold = True, updateT = False)
-            solver.outfile.write(solver.u, solver.p, time=solver.t, adaptive = True)
-            
+
         
         # Every buffer of 10 steps, solve the problem, avg hessian metric and update the mesh
-        if i % 5 == 0:
+        if i % 3 == 0:
             # Fill solution buffer
             storeU = solver.u
             metric_buffer = []
-            for _ in range(5):
+            for _ in range(3):
                 solver.solve_step(replaceUold = True, updateT = False)
                 metric = solver.get_hessian_metric()
                 metric.normalise()
                 metric_buffer.append(metric)
             # Compute Averaged metric
             H_avg = metric_buffer[0].copy(deepcopy=True)
-            H_avg.average(*metric_buffer[1:],weights = [.4, .2, .2, .1, .1])
+            H_avg.average(*metric_buffer[1:])
             H_avg.normalise()
             # Adapt mesh
             solver.mesh = adapt(solver.mesh, H_avg)
             # interpolate last solution to new adapted mesh
             solver.setup_problem(prevMeshuold=storeU)
-            solver.outfile.write(solver.uold, solver.p, time=solver.t, adaptive = True)
 
             
             
         # resolve buffer on adapted mesh
-        solver.solve_step(replaceUold = True, updateT = True)
-        if i % 5 != 0:
-            solver.outfile.write(solver.uold, solver.p, time=solver.t, adaptive = True)
-        
-        
+        solver.solve_step(replaceUold = True, updateT = True, write=True)
+
         
     
     
