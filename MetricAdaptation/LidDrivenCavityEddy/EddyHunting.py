@@ -3,12 +3,12 @@ from navierstokes import *
 from animate import *
 import os
 
-os.chdir("/home/stefano/Desktop/FluidAdapt/MetricAdaptation/ClassicalAdaptation")
+os.chdir("/home/stefano/Desktop/FluidAdapt/MetricAdaptation/LidDrivenCavityEddy")
 
 class AdaptiveNavierStokesSolver:
-    def __init__(self, mesh_file, dt=0.05, Re=400, H0=1.0, N=150, target_complexity=1500.0, h_min=1.0e-7, h_max=1.0):
+    def __init__(self, mesh, dt=0.05, Re=2000, H0=1.0, N=150, target_complexity=700.0, h_min=1.0e-7, h_max=2.0):
         # Parameters for NS Problem
-        self.mesh = Mesh(mesh_file)
+        self.mesh = mesh
         self.dt = dt
         self.Re = Re
         self.H0 = H0
@@ -52,7 +52,7 @@ class AdaptiveNavierStokesSolver:
 
         # Init uold,
         if self.uold is None:
-            self.uold = Function(self.V).interpolate(as_vector([self.H0, 0.0]))
+            self.uold = Function(self.V).interpolate(as_vector([0.0, 0.0]))
         elif prevMeshuold is not None:
             self.uold = Function(self.V).interpolate(prevMeshuold, allow_missing_dofs=True) # interpolate from previous mesh.
             
@@ -63,8 +63,8 @@ class AdaptiveNavierStokesSolver:
         # Boundary conditions
         ufar = Function(self.V).interpolate(as_vector([self.H0, 0.0]))
         self.bcs = [
-            DirichletBC(self.Z.sub(0), ufar, (11, 13)),  # upstream, top, and bottom
-            DirichletBC(self.Z.sub(0), Constant((0.0, 0.0)), (14,)),  # circle
+        DirichletBC(self.Z.sub(0), Constant((1.0, 0.0)), (4,)),  # top
+        DirichletBC(self.Z.sub(0), Constant((0.0, 0.0)), (1, 2))  # sides
         ]
 
     def solve_step(self, replaceUold = False, updateT = False, write = False):
@@ -80,10 +80,14 @@ class AdaptiveNavierStokesSolver:
         
 
 
-    def get_hessian_metric(self):
+    def get_hessian_metric(self, u = None):
         """Gets hessian metric of the current solution."""
-        ux = self.u.sub(0)
-        uy = self.u.sub(1)
+        if u is None:
+            ux = self.u.sub(0)
+            uy = self.u.sub(1)
+        else:
+            ux = u.sub(0)
+            uy = u.sub(1)
         Hx = self.metric_from_hessian(ux)
         Hy = self.metric_from_hessian(uy)
         Hx.normalise()
@@ -97,7 +101,9 @@ class AdaptiveNavierStokesSolver:
         
 # Main execution
 if __name__ == "__main__":
-    solver = AdaptiveNavierStokesSolver("cylinder.msh")
+    mesh = UnitSquareMesh(10, 10)
+    solver = AdaptiveNavierStokesSolver(mesh)
+    
     solver.setup_problem()
     for i in range(500):
 
@@ -110,27 +116,28 @@ if __name__ == "__main__":
 
         
         # Every buffer of 10 steps, solve the problem, avg hessian metric and update the mesh
-        if i % 4 == 0:
+        if i % 3 == 0:
             # Fill solution buffer
             storeU = solver.u
             metric_buffer = []
-            for _ in range(4):
+            for _ in range(3):
                 solver.solve_step(replaceUold = True, updateT = False)
-                metric = solver.get_hessian_metric()
+                vorticity = Function(solver.W).interpolate(curl(solver.u))
+                metric = solver.metric_from_hessian(vorticity)
                 metric.normalise()
                 metric_buffer.append(metric)
             # Compute Averaged metric
-            H_avg = metric_buffer[0].copy(deepcopy=True)
-            H_avg.intersect(*metric_buffer[1:])
-            H_avg.normalise()
+            H_intersect = metric_buffer[0].copy(deepcopy=True)
+            H_intersect.intersect(*metric_buffer[1:])
+            H_intersect.normalise()
             # Adapt mesh
-            solver.mesh = adapt(solver.mesh, H_avg)
+            solver.mesh = adapt(solver.mesh, H_intersect)
             # interpolate last solution to new adapted mesh
             solver.setup_problem(prevMeshuold=storeU)
 
             
             
-        # resolve buffer on adapted mesh
+        # re-solve buffer on adapted mesh
         solver.solve_step(replaceUold = True, updateT = True, write=True)
 
         

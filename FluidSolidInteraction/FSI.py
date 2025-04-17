@@ -2,6 +2,10 @@ from firedrake import *
 from firedrake.output import VTKFile
 import firedrake.cython.dmcommon as dmcommon
 from firedrake.utils import IntType
+import os
+os.chdir("/home/stefano/Desktop/FluidAdapt/FluidSolidInteraction")
+
+
 
 from movement import *
 
@@ -311,7 +315,7 @@ if __name__ == "__main__":
     outfileSolid = VTKFile("solid.pvd")
     
     t = 0
-    Tmax = 8
+    Tmax = 15
     dt = 0.04
     uf0 = None
     ups0 = None
@@ -372,7 +376,7 @@ if __name__ == "__main__":
             )
             
             bcs = [
-                DirichletBC(ZF.sub(1), Constant(.5), (3,)),  # inlet
+                DirichletBC(ZF.sub(1), Constant(.25), (3,)),  # inlet
                 #DirichletBC(ZF.sub(0), Constant((1.0, 0.0)), (3)), # sides
                 DirichletBC(ZF.sub(0), Constant((0.0, 0.0)), (5, 6, 7)), # sides
                 DirichletBC(ZF.sub(1), Constant(0.0), (4))  # outlet
@@ -407,7 +411,7 @@ if __name__ == "__main__":
         if True:
             # Setup material parameters and body forces. 
             rho = Constant(.25)*Constant(15)  # density
-            g = Constant(0)  # gravity
+            g = Constant(9.81)  # gravity
             f = as_vector([0, -rho * g])  # body force
             mu_ = Constant(.25)*Constant(75)  
             lambda_ = Constant(.25)*Constant(125) 
