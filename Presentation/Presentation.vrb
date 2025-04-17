@@ -1,0 +1,14 @@
+\begin{itemize}
+		\item Parallel metric based adaptation is implemented in PETSc (Wallwork et al. 2022) and has been ported into Firedrake with the Animate library.
+		\vfill
+		\begin{lstlisting}[language=Python, basicstyle=\ttfamily\scriptsize]
+			import animate
+			...
+			P1_ten = TensorFunctionSpace(mesh, "CG", 1)
+			metric = RiemannianMetric(P1_ten)
+			metric.set_parameters(metric_params)
+			metric.compute_hessian(c)
+			metric.normalise()
+			adapted_mesh = adapt(mesh, metric)
+		\end{lstlisting}
+	\end{itemize}	

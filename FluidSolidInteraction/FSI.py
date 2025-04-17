@@ -2,6 +2,7 @@ from firedrake import *
 from firedrake.output import VTKFile
 import firedrake.cython.dmcommon as dmcommon
 from firedrake.utils import IntType
+
 import os
 os.chdir("/home/stefano/Desktop/FluidAdapt/FluidSolidInteraction")
 
@@ -29,7 +30,7 @@ def filtermeshedges(mesh, indicator):
     
     # Modify the rest of the code to use petsc mesh filtering
   
-    # Create an adaptation label to mark cells for refinement
+    # Create a filter label to mark entities
     dm.createLabel('filter')
     adaptLabel = dm.getLabel('filter')
     adaptLabel.setDefaultValue(0)
@@ -42,10 +43,10 @@ def filtermeshedges(mesh, indicator):
     opts = PETSc.Options()
 
     opts['dm_plex_transform_active'] = 'filter'
-    opts['dm_plex_transform_type'] = 'transform_filter' # 
+    opts['dm_plex_transform_type'] = 'transform_filter' 
     dmTransform = PETSc.DMPlexTransform().create(comm = mesh.comm)
     dmTransform.setDM(dm)
-    # For now the only way to set the active label with petsc4py is with PETSc.Options() (DMPlexTransformSetActive() has no binding)
+
     dmTransform.setFromOptions()
     dmTransform.setUp()
     dmAdapt = dmTransform.apply(dm)
@@ -56,22 +57,21 @@ def filtermeshedges(mesh, indicator):
     dmTransform.destroy()
     
     # Remove labels to stop further distribution in mesh()
-    # dm.distributeSetDefault(False) <- Matt's suggestion
     dmAdapt.removeLabel("pyop2_core")
     dmAdapt.removeLabel("pyop2_owned")
     dmAdapt.removeLabel("pyop2_ghost")
-    # ^ Koki's suggestion
-
+    
     # Pull distribution parameters from original dm
     distParams = mesh._distribution_parameters
     
     # Cast mesh as a 1D Mesh
     dmAdapt.setDimension(1)
+    
     # Create a new mesh from the adapted dm
-    refinedmesh = Mesh(dmAdapt, distribution_parameters = distParams, comm = mesh.comm)
+    filtermesh = Mesh(dmAdapt, distribution_parameters = distParams, comm = mesh.comm)
     opts['dm_plex_transform_type'] = 'refine_regular'
     
-    return refinedmesh
+    return filtermesh
 
 
 
