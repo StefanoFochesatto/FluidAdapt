@@ -438,9 +438,10 @@ Let $\pi_h(u)$ be the interpolant of $u$ in $S^h$ then,
 		\item Perform hessian based adaptation on the initial time step.
 		\item Solve the problem on a specified sub-interval.
 		\item Compute the hessian based metric for each solution in the sub interval. 
-		\item Intersect the Metrics and refine the mesh.
+		\item Intersect the metrics and adapt the mesh.
+		\item Transfer the solution to the new mesh (interp or project)
 		\item Re-solve the problem on the sub-interval.
-		\item Repeat 2-5 on the next sub-interval until we reach the end of the simulation. 
+		\item Repeat 2-6 on the next sub-interval until we reach the end of the simulation. 
 	\end{enumerate}
   \end{frame}
   \begin{frame}
@@ -464,6 +465,17 @@ Let $\pi_h(u)$ be the interpolant of $u$ in $S^h$ then,
 	\vfill
 	Demo
 	\vfill
+  \end{frame}
+
+  \begin{frame}
+	\frametitle{SUPG Metric Advection}
+	\begin{itemize}
+		\item Solve for metric $M$ where, \[\frac{\partial m_{ij}}{\partial t} + u \cdot \nabla m_{ij} = 0.\]
+		\item Implicit-Euler weak form, \[\int_\Omega \left( m^{n+1} \phi + \Delta t (u \cdot \nabla m^{n+1}) \phi \right) dx = \int_\Omega m^n \phi \, dx,\]
+		\item SUPG stabilisation for CG finite elements modifies, \[\phi \rightarrow \phi + \tau \, u \cdot \nabla \phi.\]
+		\item The amount of added diffusion is controlled by $\tau$.
+		\item $\tau = \frac{h}{2|u|}$ for pure advection, $\tau = \frac{h|u|}{6K}$ for advection-diffusion.
+		\end{itemize}
   \end{frame}
 
 

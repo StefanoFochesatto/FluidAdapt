@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1744911984.73063 "/home/stefano/Desktop/FluidAdapt/Presentation/Presentation.tex" "Presentation.pdf" "Presentation" 1744911987.72655 0
+["pdflatex"] 1744920729.5448 "/home/stefano/Desktop/FluidAdapt/Presentation/Presentation.tex" "Presentation.pdf" "Presentation" 1744920732.83807 0
   "/etc/texmf/web2c/texmf.cnf" 1722633200.40834 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/stefano/Desktop/FluidAdapt/Presentation/Presentation.tex" 1744911984.34782 14817 15e3d34c2edd62a0cac3c40b5d54df6b ""
+  "/home/stefano/Desktop/FluidAdapt/Presentation/Presentation.tex" 1744920729.23891 15520 075566b46f6347056500677ea8a97aa2 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm" 1246382020 924 9904cf1d39e9767e7a3622f2a125a565 ""
@@ -344,11 +344,11 @@
   "Figures/Tetra.png" 1744900325.72399 740213 0ace70e482b3bb0fbd3a81baa66c8b45 ""
   "Figures/intersect.png" 1744901565.91364 105131 20fe128015fe46d74c0597e3d1204dd5 ""
   "Figures/refinementinterp.png" 1744859571.7335 47356 8ce1a6ae0c00707d385ac4913b3885cc ""
-  "Presentation.aux" 1744911987.54203 5380 082afc81c2d0121db35c4a0808256cea "pdflatex"
-  "Presentation.nav" 1744911987.54403 2770 2301868c99e1a5084a2d34a2c9d8cf1d "pdflatex"
-  "Presentation.tex" 1744911984.34782 14817 15e3d34c2edd62a0cac3c40b5d54df6b ""
-  "Presentation.toc" 1744911987.54403 167 420a5de52e730506a7a71f5fdc465e87 "pdflatex"
-  "Presentation.vrb" 1744911987.42602 518 4d076525625e5bad9bcc316dc7713037 "pdflatex"
+  "Presentation.aux" 1744920732.6609 5509 c5e6ca71132193645232f440b24b49ea "pdflatex"
+  "Presentation.nav" 1744920732.6619 2863 9b33b7abeeb5647f87a3105dbc1a8e38 "pdflatex"
+  "Presentation.tex" 1744920729.23891 15520 075566b46f6347056500677ea8a97aa2 ""
+  "Presentation.toc" 1744920732.6619 167 420a5de52e730506a7a71f5fdc465e87 "pdflatex"
+  "Presentation.vrb" 1744920732.5179 518 4d076525625e5bad9bcc316dc7713037 "pdflatex"
   (generated)
   "Presentation.aux"
   "Presentation.log"

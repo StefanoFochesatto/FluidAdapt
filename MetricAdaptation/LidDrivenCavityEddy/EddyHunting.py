@@ -6,7 +6,7 @@ import os
 os.chdir("/home/stefano/Desktop/FluidAdapt/MetricAdaptation/LidDrivenCavityEddy")
 
 class AdaptiveNavierStokesSolver:
-    def __init__(self, mesh, dt=0.05, Re=2000, H0=1.0, N=150, target_complexity=700.0, h_min=1.0e-7, h_max=2.0):
+    def __init__(self, mesh, dt=0.05, Re=2000, H0=1.0, N=150, target_complexity=1500.0, h_min=1.0e-7, h_max=2.0):
         # Parameters for NS Problem
         self.mesh = mesh
         self.dt = dt
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     solver = AdaptiveNavierStokesSolver(mesh)
     
     solver.setup_problem()
-    for i in range(500):
+    for i in range(700):
 
         # Initial Adaptation Step
         if i == 0:

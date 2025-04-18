@@ -33,7 +33,7 @@ class AdaptiveNavierStokesSolver:
         }
         
         # Output file
-        self.outfile = VTKFile("fluidTest.pvd")
+        self.outfile = VTKFile("MetricAdvection10StepBuffer.pvd")
 
     def metric_from_hessian(self, u):
         """Construct a hessian-based metric from a solution."""
@@ -182,10 +182,10 @@ if __name__ == "__main__":
             solver.setup_problem(prevMeshuold=solver.uold)
             
     
-        if i % 3 == 0:
+        if i % 10 == 0:
             storeU = solver.uold
             u_buffer = []
-            for _ in range(3):
+            for _ in range(10):
                 solver.solve_step(replaceUold = True, updateT = False)
                 u_buffer.append(solver.u)
                 
